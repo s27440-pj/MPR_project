@@ -5,7 +5,7 @@ import java.util.List;
 
 public class RentalStorage {
     private static RentalStorage instance = null;
-    List<Rental> rentals = new ArrayList<>();
+    private List<Rental> rentals = new ArrayList<>();
 
     private RentalStorage(){
     }
