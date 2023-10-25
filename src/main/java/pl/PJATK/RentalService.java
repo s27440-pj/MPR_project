@@ -11,7 +11,10 @@ public class RentalService {
         while (rentalsIterator.hasNext()) {
             Rental currentRental = rentalsIterator.next();
             if (vin.equals(currentRental.getCar().getVin())) {
-                if (Instant.parse(rentalDate).compareTo(currentRental.getReturnDate()) <= 0) {
+                if ( (!Instant.parse(rentalDate).isBefore(currentRental.getRentalDate()) &&
+                        !Instant.parse(rentalDate).isAfter(currentRental.getReturnDate())) ||
+                        (!Instant.parse(returnDate).isBefore(currentRental.getRentalDate()) &&
+                                !Instant.parse(returnDate).isAfter(currentRental.getReturnDate())) ){
                     return false;
                 }
             }
