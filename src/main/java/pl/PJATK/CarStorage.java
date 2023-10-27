@@ -9,20 +9,23 @@ public class CarStorage {
 
     private CarStorage() {
     }
-    public static CarStorage getInstance(){
-        if (instance == null){
+
+    public static CarStorage getInstance() {
+        if (instance == null) {
             instance = new CarStorage();
         }
         return instance;
     }
 
-    public List<Car> getAllCars(){
+    public List<Car> getAllCars() {
         return cars;
     }
-    public void addCar(Car car){
+
+    public void addCar(Car car) {
         cars.add(car);
     }
-    public void removeCar(Car car){
+
+    public void removeCar(Car car) {
         cars.remove(car);
     }
 }

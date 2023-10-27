@@ -1,19 +1,19 @@
 package pl.PJATK;
 
-import java.time.Instant;
+import java.time.LocalDate;
 
 public class Rental {
     private Client client;
     private Car car;
-    private Instant rentalDate;
-    private Instant returnDate;
+    private LocalDate rentalDate;
+    private LocalDate returnDate;
 
 
-    public Rental(Client client, Car car, String rentalDate, String returnDate) {
+    public Rental(Client client, Car car, LocalDate rentalDate, LocalDate returnDate) {
         this.client = client;
         this.car = car;
-        this.rentalDate = Instant.parse(rentalDate);
-        this.returnDate = Instant.parse(returnDate);
+        this.rentalDate = rentalDate;
+        this.returnDate = returnDate;
     }
 
 //    // method to transform String into Date
@@ -30,16 +30,16 @@ public class Rental {
         return this.car;
     }
 
-    public Instant getRentalDate() {
+    public LocalDate getRentalDate() {
         return this.rentalDate;
     }
 
-    public Instant getReturnDate() {
+    public LocalDate getReturnDate() {
         return this.returnDate;
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         return "Rental: {" +
                 "Client: " + getClient().getClientID() + " " +
                 "Car: " + getCar().getVin() + " " +

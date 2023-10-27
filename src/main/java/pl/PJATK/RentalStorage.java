@@ -7,25 +7,25 @@ public class RentalStorage {
     private static RentalStorage instance = null;
     private List<Rental> rentals = new ArrayList<>();
 
-    private RentalStorage(){
+    private RentalStorage() {
     }
 
-    public static RentalStorage getInstance(){
-        if (instance == null){
+    public static RentalStorage getInstance() {
+        if (instance == null) {
             instance = new RentalStorage();
         }
         return instance;
     }
 
-    public List<Rental> getAllRentals(){
+    public List<Rental> getAllRentals() {
         return rentals;
     }
 
-    public void addRental(Rental rental){
+    public void addRental(Rental rental) {
         rentals.add(rental);
     }
 
-    public void removeRenatl(Rental rental){
+    public void removeRental(Rental rental) {
         rentals.remove(rental);
     }
 }
