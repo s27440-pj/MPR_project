@@ -11,6 +11,10 @@ public class RentalService {
         while (rentalsIterator.hasNext()) {
             Rental currentRental = rentalsIterator.next();
             if (vin.equals(currentRental.getCar().getVin())) {
+                /*
+                checking if rental day isn't between some other rental, and if return date isn't
+                between some other rental either.
+                */
                 if ( (!Instant.parse(rentalDate).isBefore(currentRental.getRentalDate()) &&
                         !Instant.parse(rentalDate).isAfter(currentRental.getReturnDate())) ||
                         (!Instant.parse(returnDate).isBefore(currentRental.getRentalDate()) &&
@@ -23,7 +27,7 @@ public class RentalService {
     }
 
     public static void rent(Client client, String vin, String rentalDate, String returnDate){
-        if (isAvailable( vin, rentalDate, returnDate)){
+        if (isAvailable(vin, rentalDate, returnDate)){
             RentalStorage rentalStorage = RentalStorage.getInstance();
             CarStorage carstorage = CarStorage.getInstance();
 
@@ -34,6 +38,5 @@ public class RentalService {
                 }
             }
         }
-
     }
 }
