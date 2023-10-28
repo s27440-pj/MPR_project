@@ -36,6 +36,8 @@ public class Main {
 
         RentalService.rent(client2, "abc123", LocalDate.of(123, 10, 16),
                 LocalDate.of(123, 10, 18));
+        System.out.println(RentalService.estimatedPrice(car1.getVin(), LocalDate.of(123,10,16),
+                LocalDate.of(123,10,18)));
 
         System.out.println(rentalStorage.getAllRentals());
     }

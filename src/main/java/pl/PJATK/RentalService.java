@@ -1,6 +1,7 @@
 package pl.PJATK;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ListIterator;
 
 public class RentalService {
@@ -35,6 +36,23 @@ public class RentalService {
                 }
             }
         }
+    }
 
+    public static double estimatedPrice(String vin, LocalDate rentalDate, LocalDate returnDate){
+        CarStorage carstorage = CarStorage.getInstance();
+        double daysOfRent = ChronoUnit.DAYS.between(rentalDate, returnDate);
+        double pricePerDay = 100.0;
+        for (Car currentCar : carstorage.getAllCars()){
+            if (vin.equals(currentCar.getVin())){
+                if (currentCar.getType() == Type.ECONOMY){
+                    pricePerDay = 80.0;
+                    return daysOfRent*pricePerDay;
+                } else if (currentCar.getType() == Type.PREMIUM){
+                    pricePerDay = 120.0;
+                    return daysOfRent*pricePerDay;
+                }
+            }
+        }
+        return daysOfRent*pricePerDay;
     }
 }
