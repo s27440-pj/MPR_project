@@ -34,9 +34,11 @@ public class Main {
         rentalStorage.addRental(rental1);
         rentalStorage.addRental(rental2);
 
-        RentalService.rent(client2, "abc123", LocalDate.of(123, 10, 16),
+        RentalService rentalService = RentalService.getInstance();
+
+        rentalService.rent(client2, "abc1234", LocalDate.of(123, 10, 16),
                 LocalDate.of(123, 10, 18));
-        System.out.println(RentalService.estimatedPrice(car1.getVin(), LocalDate.of(123,10,16),
+        System.out.println(rentalService.estimatedPrice(car1.getVin(), LocalDate.of(123,10,16),
                 LocalDate.of(123,10,18)));
 
         System.out.println(rentalStorage.getAllRentals());
