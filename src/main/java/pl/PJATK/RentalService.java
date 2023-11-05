@@ -17,29 +17,29 @@ public class RentalService {
         return instance;
     }
 
-    public boolean carExist(String vin){
+    public Car carExist(String vin){
         CarStorage carStorage = CarStorage.getInstance();
         for (Car currentCar : carStorage.getAllCars()){
             if (vin.equals(currentCar.getVin())) {
-                return true;
+                return currentCar;
             }
         }
-        return false;
+        throw new NoSuchElementException("There is no such car.");
     }
 
     public boolean isAvailable(String vin, LocalDate rentalDate, LocalDate returnDate) {
         RentalService rentalService = RentalService.getInstance();
-        if (!rentalService.carExist(vin)){
-            throw new NoSuchElementException("We don't have a car with vin number " + vin);
-        }
         RentalStorage rentalStorage = RentalStorage.getInstance();
+        rentalService.carExist(vin);
         for (Rental currentRental : rentalStorage.getAllRentals()) {
             if (vin.equals(currentRental.getCar().getVin())) {
                 // Checking if car isn't already busy between potential renting dates
-                if ((!rentalDate.isBefore(currentRental.getRentalDate()) &&
-                        !rentalDate.isAfter(currentRental.getReturnDate())) ||
-                        (!returnDate.isBefore(currentRental.getRentalDate()) &&
-                                !returnDate.isAfter(currentRental.getReturnDate()))) {
+                if (isBetween(currentRental.getRentalDate(), currentRental.getReturnDate(), rentalDate)
+                || isBetween(currentRental.getRentalDate(), currentRental.getReturnDate(), returnDate)) {
+                    return false;
+                }
+                if (isBetween(rentalDate, returnDate, currentRental.getRentalDate())
+                || isBetween(rentalDate, returnDate, currentRental.getReturnDate())){
                     return false;
                 }
             }
@@ -47,39 +47,28 @@ public class RentalService {
         return true;
     }
 
-    public void rent(Client client, String vin, LocalDate rentalDate, LocalDate returnDate) {
+    private boolean isBetween(LocalDate periodStart, LocalDate periodEnd, LocalDate checkingDate){
+        return checkingDate.isAfter(periodStart) && checkingDate.isBefore(periodEnd);
+    }
+
+    public Rental rent(Client client, String vin, LocalDate rentalDate, LocalDate returnDate) {
         if (isAvailable(vin, rentalDate, returnDate)) {
             RentalStorage rentalStorage = RentalStorage.getInstance();
-            CarStorage carstorage = CarStorage.getInstance();
-
-            for (Car currentCar : carstorage.getAllCars()) {
-                if (vin.equals(currentCar.getVin())) {
-                    rentalStorage.addRental(new Rental(client, currentCar, rentalDate, returnDate));
-                    return;
-                }
-            }
+            RentalService rentalService = RentalService.getInstance();
+            Car car = rentalService.carExist(vin);
+            Rental rental = new Rental(client, car, rentalDate, returnDate);
+            rentalStorage.addRental(rental);
+            return rental;
+        } else {
+            throw new IllegalStateException("This car is not available during those dates.");
         }
     }
 
     public double estimatedPrice(String vin, LocalDate rentalDate, LocalDate returnDate){
         RentalService rentalService = RentalService.getInstance();
-        if (!rentalService.carExist(vin)){
-            throw new NoSuchElementException("We don't have a car with vin number " + vin);
-        }
-        CarStorage carStorage = CarStorage.getInstance();
+        Car car = rentalService.carExist(vin);
         long daysOfRent = ChronoUnit.DAYS.between(rentalDate, returnDate);
-        double pricePerDay = 100.0;
-        for (Car currentCar : carStorage.getAllCars()){
-            if (vin.equals(currentCar.getVin())){
-                if (currentCar.getType() == Type.ECONOMY){
-                    pricePerDay = 80.0;
-                    return daysOfRent*pricePerDay;
-                } else if (currentCar.getType() == Type.PREMIUM){
-                    pricePerDay = 120.0;
-                    return daysOfRent*pricePerDay;
-                }
-            }
-        }
-        return daysOfRent*pricePerDay;
+        double pricePerDay = 500;
+        return pricePerDay * daysOfRent * car.getType().getMultiplyer();
     }
 }

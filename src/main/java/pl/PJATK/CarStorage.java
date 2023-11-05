@@ -28,4 +28,8 @@ public class CarStorage {
     public void removeCar(Car car) {
         cars.remove(car);
     }
+
+    public void pureDatabase(){
+        cars = new ArrayList<>();
+    }
 }
