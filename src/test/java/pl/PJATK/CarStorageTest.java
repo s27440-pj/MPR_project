@@ -7,7 +7,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class CarStorageTest {
-    private CarStorage carStorage = CarStorage.getInstance();
+    private CarStorage carStorage = new CarStorage();
 
     @Test
     void shouldHaveEntriesInStorage(){

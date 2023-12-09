@@ -1,24 +1,24 @@
 package pl.PJATK;
 
+import org.springframework.stereotype.Service;
+
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
+@Service
 public class RentalService {
-    private static RentalService instance = null;
+    private final CarStorage carStorage;
+    private final RentalStorage rentalStorage;
 
-    private RentalService(){
+    public RentalService(CarStorage carStorage, RentalStorage rentalStorage) {
+        this.carStorage = carStorage;
+        this.rentalStorage = rentalStorage;
     }
 
-    public static RentalService getInstance() {
-        if (instance == null) {
-            instance = new RentalService();
-        }
-        return instance;
-    }
 
     public Car carExist(String vin){
-        CarStorage carStorage = CarStorage.getInstance();
         for (Car currentCar : carStorage.getAllCars()){
             if (vin.equals(currentCar.getVin())) {
                 return currentCar;
@@ -28,9 +28,13 @@ public class RentalService {
     }
 
     public boolean isAvailable(String vin, LocalDate rentalDate, LocalDate returnDate) {
-        RentalService rentalService = RentalService.getInstance();
-        RentalStorage rentalStorage = RentalStorage.getInstance();
-        rentalService.carExist(vin);
+        if (returnDate.isBefore(rentalDate) || returnDate == rentalDate ||
+                rentalDate.isBefore(LocalDate.of(2023,11,26))){
+            throw new RuntimeException("Incorrect dates of rental");
+        }
+//        carExist(vin);
+//        Optional<Car> carByVin = carStorage.findCarByVin(vin);
+//        Car car = carByVin.orElseThrow();
         for (Rental currentRental : rentalStorage.getAllRentals()) {
             if (vin.equals(currentRental.getCar().getVin())) {
                 // Checking if car isn't already busy between potential renting dates
@@ -53,9 +57,7 @@ public class RentalService {
 
     public Rental rent(Client client, String vin, LocalDate rentalDate, LocalDate returnDate) {
         if (isAvailable(vin, rentalDate, returnDate)) {
-            RentalStorage rentalStorage = RentalStorage.getInstance();
-            RentalService rentalService = RentalService.getInstance();
-            Car car = rentalService.carExist(vin);
+            Car car = carExist(vin);
             Rental rental = new Rental(client, car, rentalDate, returnDate);
             rentalStorage.addRental(rental);
             return rental;
@@ -65,9 +67,12 @@ public class RentalService {
     }
 
     public double estimatedPrice(String vin, LocalDate rentalDate, LocalDate returnDate){
-        RentalService rentalService = RentalService.getInstance();
-        Car car = rentalService.carExist(vin);
+        Optional<Car> carByVin = carStorage.findCarByVin(vin);
+        Car car = carByVin.orElseThrow();
         long daysOfRent = ChronoUnit.DAYS.between(rentalDate, returnDate);
+        if (daysOfRent < 1){
+            throw new RuntimeException("You can rent car for 1 day minimum, incorrect dates of rent");
+        }
         double pricePerDay = 500;
         return pricePerDay * daysOfRent * car.getType().getMultiplyer();
     }

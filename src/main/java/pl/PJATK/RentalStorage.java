@@ -1,21 +1,24 @@
 package pl.PJATK;
 
+import org.springframework.stereotype.Component;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class RentalStorage {
-    private static RentalStorage instance = null;
+//    private static RentalStorage instance = null;
     private List<Rental> rentals = new ArrayList<>();
 
-    private RentalStorage() {
-    }
+//    private RentalStorage() {
+//    }
 
-    public static RentalStorage getInstance() {
-        if (instance == null) {
-            instance = new RentalStorage();
-        }
-        return instance;
-    }
+//    public static RentalStorage getInstance() {
+//        if (instance == null) {
+//            instance = new RentalStorage();
+//        }
+//        return instance;
+//    }
 
     public List<Rental> getAllRentals() {
         return rentals;
